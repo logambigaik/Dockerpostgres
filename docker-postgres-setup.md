@@ -1,5 +1,5 @@
 
-https://testdriven.io/blog/dockerizing-flask-with-postgres-gunicorn-and-nginx/
+
 
 # Docker file for Postgres image:
   ==============================
@@ -85,3 +85,17 @@ docker-entrypoint-initb.d:
       python-postgres:
          driver : bridge
          name   : sample
+
+
+
+# Postgres SQL:
+
+    docker run --name db -e POSTGRES_PASSWORD=password1 -d -p 5432:5432 db:v1
+    docker exec -it db bash
+    psql -h 52.86.115.130 -p 5432 -U postgres
+    postgres=# \l
+    postgres=# \c postgres    ---to connect
+    postgres=# select * from userdetail;
+    
+    \q to quit
+
