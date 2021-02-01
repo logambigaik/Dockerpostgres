@@ -99,3 +99,12 @@ docker-entrypoint-initb.d:
     
     \q to quit
 
+# Problem is :
+
+  docker run --name web-app --link db:db -p 8000:5000 web:v1
+
+
+
+![image](https://user-images.githubusercontent.com/54719289/106527293-0783f200-650d-11eb-888c-99029999ee37.png)
+
+
