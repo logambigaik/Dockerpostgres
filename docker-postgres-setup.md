@@ -9,19 +9,19 @@ Dockerfile:
     ENV POSTGRES_PASSWORD=password1
     ENV POSTGRES_USER=postgres
     ENV POSTGRES_DB=postgres
-    COPY create_fixtures.sql /docker-entrypoint-initdb.d/create_fixtures.sql
+    COPY /docker-entrypoint-initdb.d/sql1.sql docker-entrypoint-initdb.d/sql1.sql
 
 
 docker-entrypoint-initb.d:
 =========================
-    docker-entrypoint-initb.d
+    docker-entrypoint-initdb.d/sql1.sql
 
-    CREATE TABLE IF NOT EXISTS numbers (
-          number    BIGINT,
-          firstname VARCHAR(20),
-          lastname  VARCHAR(20),
-          timestamp BIGINT
-    );
+    CREATE TABLE IF NOT EXISTS userdetail (
+      firstname VARCHAR(20),
+      lastname  VARCHAR(20)
+);
+
+
 
 
 # Reference:
@@ -35,18 +35,24 @@ docker-entrypoint-initb.d:
 #requirements.txt
 
       flask
-      sqlalchemy
+      flask-sqlalchemy
       psycopg2
+      SQLAlchemy
+
 
 
 #Python dockerfile:
 
            FROM python:latest
            WORKDIR /code
+           RUN python3 -m pip install --upgrade pip
+           RUN python3 -m pip install virtualenv
+           RUN python3 -m venv virtual
+           RUN . virtual/bin/activate
            ADD requirements.txt requirements.txt
            RUN pip install -r requirements.txt
            COPY app.py app.py
-           CMD ["python", "dockerpostgresapp.py"]
+           CMD ["python", "app.py"]
 
 
 
@@ -55,7 +61,27 @@ docker-entrypoint-initb.d:
 
         version: "3.8"
         services:
-        app :
+          app:
             build: ./app/
-        db:
+            container_name: app1
+            ports:
+            - 8000:5000
+            links:
+            - db
+            networks:
+            - python-postgres
+
+          db:
             build: ./database/
+            container_name: db1
+            ports:
+            - 5432:5432
+            volumes:
+            - /var/postgres/data:/var/lib/postgres/data
+            networks:
+            - python-postgres
+
+      networks:
+      python-postgres:
+         driver : bridge
+         name   : sample
