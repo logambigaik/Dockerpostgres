@@ -1,30 +1,58 @@
-from flask import Flask, render_template,request
-from flaskext.mysql import MySQL
-import pymysql
+from flask import Flask, request, render_template,jsonify
+import psycopg2
 
-app= Flask(__name__)
 
-mysql=pymysql.connect(db='flaskapp', user='root', passwd='root', host='localhost')
+#Establishing the connection
+conn = psycopg2.connect(
+   database="postgres", user='loga', password='Password1', host='127.0.0.1', port= '5432'
+)
 
-@app.route('/',methods=['GET','POST'])
+
+app=Flask(__name__)
+
+db = conn.cursor()
+
+print("Successfully connectedwith postgres")
+
+db.execute("CREATE TABLE IF NOT EXISTS userdetail(firstname VARCHAR(20),lastname VARCHAR(20))")
+
+conn.commit()
+
+print("Table is created succesffuly")
+
+
+#app=Flask(__name__)
+
+@app.route("/",methods=['POST','GET'])
 
 def index():
-    cur=mysql.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS Userdetail(firstname VARCHAR(20),lastname VARCHAR(20))")	
-    mysql.commit()
- 			
     if request.method == "POST":
+        print('Hi')
         details = request.form
         firstName = details['fname']
         lastName = details['lname']
-        cur1=mysql.cursor()
-        cur1.execute("INSERT INTO Userdetail(firstname, lastname) VALUES (%s, %s)", (firstName, lastName))
-        mysql.commit()
-        cur1.close()
-        return 'success'
-    return render_template('index.html')
+        sql1="INSERT INTO userdetail(firstname,lastname) VALUES (%s,%s)"
+        db.execute(sql1,[firstName,lastName])
+        print("Inserted value into table")
+        conn.commit()
+        sql2="SELECT * FROM userdetail WHERE firstname=%s AND lastname=%s"
+        db.execute(sql2,[firstName,lastName])
+        print(db.fetchall())
+        #conn.close()
 
+        get_row="SELECT * FROM userdetail WHERE firstname=%s and lastname=%s"
+        db.execute(get_row,[firstName,lastName])
+        result=[]
+        for row in db.fetchall():
+            print(row[0])
 
-if __name__ == '__main__':
-    #app.run(host='0.0.0.0',port=5000,debug=True)
-    app.run(debug=True)
+            obj={
+                 "firstname":row[0],
+                 "lastname":row[1]
+               }
+
+            result.append(row)
+
+        response = jsonify(result)
+        response.status_code=200
+        return(response)
