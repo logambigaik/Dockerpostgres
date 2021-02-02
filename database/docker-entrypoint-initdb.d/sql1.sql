@@ -1,3 +1,6 @@
+DROP ROLE IF EXISTS loga;
+CREATE USER loga WITH ENCRYPTED PASSWORD 'Password1';
+GRANT ALL PRIVILEGES ON DATABASE postgres TO loga;
 CREATE TABLE IF NOT EXISTS userdetail (
       firstname VARCHAR(20),
       lastname  VARCHAR(20)
