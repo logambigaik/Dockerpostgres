@@ -123,3 +123,4 @@ psql -h 3.239.59.57 -p 5432 -U postgres
 ![image](https://user-images.githubusercontent.com/54719289/106669775-28624b00-65d2-11eb-9993-08eae2fab0b7.png)
 
 
+Need to check docker compose and then docker swarm
