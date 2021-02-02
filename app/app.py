@@ -1,40 +1,62 @@
-from flask import Flask, render_template,request
-from flask import jsonify
-from sqlalchemy import create_engine
-#from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import scoped_session, sessionmaker
+from flask import Flask, request, render_template,jsonify
+import psycopg2
+
+
+#Establishing the connection
+conn = psycopg2.connect(
+   database="postgres", user='loga', password='Password1', host='db', port= '5432'
+)
+
 
 app=Flask(__name__)
-conn_str = 'postgresql://{username}:{password}@localhost:5432/{database}'.format(
-            username='postgres',
-            password='password1',
-            database='postgres'
-         )
 
-engine=create_engine(conn_str)
-db=scoped_session(sessionmaker(bind=engine))
-#db=SQLAlchemy(app)
+db = conn.cursor()
+
+print("Successfully connectedwith postgres")
+
+db.execute("CREATE TABLE IF NOT EXISTS userdetail(firstname VARCHAR(20),lastname VARCHAR(20))")
+
+conn.commit()
+
+print("Table is created succesffuly")
 
 
-@app.route('/',methods=['GET','POST'])
+#app=Flask(__name__)
+
+@app.route("/",methods=['POST','GET'])
 
 def index():
-    #cur=db.cursor()
-    db.execute("CREATE TABLE IF NOT EXISTS userdetail(firstname VARCHAR(20),lastname VARCHAR(20))")	
-    db.commit()
- 			
     if request.method == "POST":
+        print('Hi')
         details = request.form
         firstName = details['fname']
         lastName = details['lname']
-        #cur1=db.cursor()
-        db.execute("INSERT INTO Userdetail(firstname, lastname) VALUES (:fname, :lname)",{"fname":firstName,"lname":lastName})
-        db.commit()
-        db.close()
-        return 'success'
-    return render_template('index.html')
+        sql1="INSERT INTO userdetail(firstname,lastname) VALUES (%s,%s)"
+        db.execute(sql1,[firstName,lastName])
+        print("Inserted value into table")
+        conn.commit()
+        sql2="SELECT * FROM userdetail WHERE firstname=%s AND lastname=%s"
+        db.execute(sql2,[firstName,lastName])
+        print(db.fetchall())
+        #conn.close()
+
+        get_row="SELECT * FROM userdetail WHERE firstname=%s and lastname=%s"
+        db.execute(get_row,[firstName,lastName])
+        result=[]
+        for row in db.fetchall():
+            print(row[0])
+
+            obj={
+                 "firstname":row[0],
+                 "lastname":row[1]
+               }
+
+            result.append(obj)
+
+        response = jsonify(result)
+        response.status_code=200
+        return(response)
 
 
 if __name__ == '__main__':
-    #app.run(host='0.0.0.0',port=5000,debug=True)
-    app.run(debug=True)
+    app.run(host='0.0.0.0',port=5000,debug=True)
