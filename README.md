@@ -74,6 +74,36 @@ docker-entrypoint-initb.d:
     \q to quit
 
 
+    1. Modify two configure files
+# vi /var/lib/pgsql/data/postgresql.conf
+ Replace the line:
+listen_addresses = 'localhost'  -> listen_addresses = '*'
+
+
+
+
+1. Modify two configure files
+# vi /var/lib/pgsql/data/postgresql.conf
+ Replaced the line:
+listen_addresses = 'localhost'  -> listen_addresses = '*'
+# vi /var/lib/pgsql/data/pg_hba.conf
+ Add the line at the very end:
+host all all 0.0.0.0/0 trust
+(If IPv6:
+host all all ::/0 trust) 
+2. Restart the database service
+# service postgresql restart
+3. Disable the firewall
+# rcSuSEfirewall2 stop
+# chkconfig SuSEfirewall2 off
+# chkconfig SuSEfirewall2_init off
+
+
+
+3.239.59.57
+
+psql -h 3.239.59.57 -p 5432 -U postgres
+
 # Docker run:
 
     After docker build
@@ -90,6 +120,6 @@ docker-entrypoint-initb.d:
 
 # Docker compose failed in web in connectivity:
 
-[image](https://user-images.githubusercontent.com/54719289/106669775-28624b00-65d2-11eb-9993-08eae2fab0b7.png)
+![image](https://user-images.githubusercontent.com/54719289/106669775-28624b00-65d2-11eb-9993-08eae2fab0b7.png)
 
 
