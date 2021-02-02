@@ -27,7 +27,6 @@ print("Table is created succesffuly")
 
 def index():
     if request.method == "POST":
-        print('Hi')
         details = request.form
         firstName = details['fname']
         lastName = details['lname']
@@ -44,14 +43,12 @@ def index():
         db.execute(get_row,[firstName,lastName])
         result=[]
         for row in db.fetchall():
-            print(row[0])
-
             obj={
                  "firstname":row[0],
                  "lastname":row[1]
                }
 
-            result.append(row)
+            result.append(obj)
 
         response = jsonify(result)
         response.status_code=200
