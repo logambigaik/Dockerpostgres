@@ -3,6 +3,7 @@
 
 # Docker file for Postgres image:
   ==============================
+
 Dockerfile:
 
     FROM postgres:11.5
@@ -14,6 +15,8 @@ Dockerfile:
 
 docker-entrypoint-initb.d:
 =========================
+
+
     CREATE USER flaskdb WITH ENCRYPTED PASSWORD 'Password1';
     CREATE DATABASE flaskdb;
     GRANT ALL PRIVILEGES ON DATABASE flaskdb TO flaskdb;
@@ -25,12 +28,12 @@ docker-entrypoint-initb.d:
 
 # Reference:
 
-    #Establishing the connection
-    conn = psycopg2.connect(
-   database='flaskdb', user='flaskdb', password='Password1', host='mydb', port= '5432'
-  )
+            #Establishing the connection
+              conn = psycopg2.connect(
+                    database='flaskdb', user='flaskdb', password='Password1', host='mydb', port= '5432'
+              )
 
-    # Note : host is db-container name not localhost or 127.0.0.1 in docker
+            # Note : host is db-container name not localhost or 127.0.0.1 in docker
          
 #requirements.txt
 
@@ -115,12 +118,6 @@ docker-entrypoint-initb.d:
     @@@Browser
 ![image](https://user-images.githubusercontent.com/54719289/106787199-6f554c80-6675-11eb-8dcd-bc63b9f382a8.png)
 
-
-
- 
- 
- 
- 
  
      ######################################################################################################
      ##  NOTES
