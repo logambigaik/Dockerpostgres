@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-    app:
+    myapp:
         image: web:v1
         container_name: app
         ports:
@@ -10,7 +10,7 @@ services:
         networks:
         - python-postgres
 
-    db:
+    mydb:
         image: mydb:v1
         container_name: mydb
         restart: always
