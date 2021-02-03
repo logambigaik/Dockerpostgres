@@ -137,22 +137,24 @@ docker-entrypoint-initb.d:
     
     \q to quit
 
-#In case connection refuse in local:
-    1. Modify two configure files
-        # vi /var/lib/pgsql/data/postgresql.conf
-            Replace the line:
-            listen_addresses = 'localhost'  -> listen_addresses = '*'
-     2. Modify two configure files
-        # vi /var/lib/pgsql/data/postgresql.conf
-          Replaced the line:
-          listen_addresses = 'localhost'  -> listen_addresses = '*'
-        # vi /var/lib/pgsql/data/pg_hba.conf
-        Add the line at the very end:
-        host all all 0.0.0.0/0 trust
-        (If IPv6:
-        host all all ::/0 trust) 
+      #In case connection refuse in local:
+          1. Modify two configure files
+              # vi /var/lib/pgsql/data/postgresql.conf
+                Replace the line:
+                listen_addresses = 'localhost'  -> listen_addresses = '*'
+
+
+          2. Modify two configure files
+              # vi /var/lib/pgsql/data/postgresql.conf
+              Replaced the line:
+              listen_addresses = 'localhost'  -> listen_addresses = '*'
+              
+              # vi /var/lib/pgsql/data/pg_hba.conf
+               Add the line at the very end:
+              host all all 0.0.0.0/0 trust
+              (If IPv6: host all all ::/0 trust) 
       
-      3. Restart the database service
-          # service postgresql restart
+          3. Restart the database service
+              # service postgresql restart
 
 
