@@ -52,10 +52,12 @@ def index():
                }
 
             result.append(obj)
-
+ 
         response = jsonify(result)
         response.status_code=200
         return(response)
+
+    return render_template('index.html')
 
 
 if __name__ == '__main__':
