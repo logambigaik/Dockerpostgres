@@ -1,5 +1,5 @@
 
-# While running docker stack deploy, give the stack name as webapp, so that image will created as webapp_mydb.
+# While running docker stack deploy, give the stack name as webapp, so that image will be created as webapp_mydb.
 
         
 
