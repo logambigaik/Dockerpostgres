@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+   <body bgcolor="cyan">
+
+
+      <table border = 1>
+        <tr>
+            <th>Employee Number</th>
+            <th>Employee Name</th>
+            <th>Designation</th>
+            <th>Salary</th>
+        </tr>
+        {% for row in result %}
+        <tr>
+            <td> {{ row[0] }} </td>
+            <td> {{ row[1] }} </td>
+            <td> {{ row[2] }} </td>
+            <td> {{ row[3] }} </td>
+        </tr>
+        {% endfor %}
+      </table>
+      <a href="\"> GO BACK</a>
+   </body>
+</html>
