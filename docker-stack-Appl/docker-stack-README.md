@@ -1,6 +1,8 @@
 
 # While running docker stack deploy, give the stack name as webapp, so that image will be created as webapp_mydb.
 
+# For creating database image, refer rthe folder :Dockerpostgres/database
+
         
 
         #Establishing the connection
