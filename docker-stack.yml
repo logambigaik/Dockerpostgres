@@ -1,26 +1,30 @@
 version: "3.8"
 services:
     app:
-        image: web1:v1        
-        
+        image: web:v1
+        container_name: app
         ports:
-        - 8000:5000
+        - 5000:5000
         links:
-        - db 
+        - db
         networks:
         - python-postgres
-        
+
     db:
-        image: db:v1
-        
+        image: mydb:v1
+        container_name: mydb
+        restart: always
         ports:
         - 5432:5432
+        environment:
+        - POSTGRES_HOST_AUTH_METHOD=trust
+        - PGDATA='/var/lib/postgresql/data'
         volumes:
-         - /var/postgres/data:/var/lib/postgres/data
+        - /var/postgres/data:/var/lib/postgres/data
         networks:
-         - python-postgres
+        - python-postgres
 
 networks:
   python-postgres:
-       driver :  overlay
+       driver : overlay
        
