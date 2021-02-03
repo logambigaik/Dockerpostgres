@@ -6,23 +6,18 @@
 Dockerfile:
 
     FROM postgres:11.5
-    USER postgres
     ENV POSTGRES_HOST_AUTH_METHOD=trust
+    ENV POSTGRES_USERNAME='flaskdb'
     ENV POSTGRES_PASSWORD='Password1'
-    ENV POSTGRES_USER='loga'
-    ENV POSTGRES_DB='postgres'
-    WORKDIR  /var/lib/postgresql/data
-    ADD ./docker-entrypoint-initdb.d/sql1.sql mydata/docker-entrypoint-initdb.d/sql1.sql
-    ENV PGDATA=/var/lib/postgresql/data/mydata
+    COPY ./docker-entrypoint-initdb.d/sql1.sql docker-entrypoint-initdb.d/sql1.sql
+
 
 docker-entrypoint-initb.d:
 =========================
-    CREATE USER loga WITH ENCRYPTED PASSWORD 'Password1';
-    GRANT ALL PRIVILEGES ON DATABASE postgres TO loga;
-    CREATE TABLE IF NOT EXISTS userdetail (
-      firstname VARCHAR(20),
-      lastname  VARCHAR(20)
-    );
+    CREATE USER flaskdb WITH ENCRYPTED PASSWORD 'Password1';
+    CREATE DATABASE flaskdb;
+    GRANT ALL PRIVILEGES ON DATABASE flaskdb TO flaskdb;
+
 
 
 
@@ -30,9 +25,11 @@ docker-entrypoint-initb.d:
 
 # Reference:
 
-     conn = psycopg2.connect(
-     database="postgres", user='loga', password='Password1', host='db', port= '5432'
-)
+    #Establishing the connection
+    conn = psycopg2.connect(
+   database='flaskdb', user='flaskdb', password='Password1', host='mydb', port= '5432'
+  )
+
     # Note : host is db-container name not localhost or 127.0.0.1 in docker
          
 #requirements.txt
@@ -43,8 +40,10 @@ docker-entrypoint-initb.d:
 
 
 
-#Python dockerfile:
+# Python dockerfile:
 
+          @@ With Virtual
+          
           FROM python:latest
           WORKDIR /code
           RUN python3 -m pip install --upgrade pip
@@ -56,71 +55,104 @@ docker-entrypoint-initb.d:
           COPY app.py app.py
           COPY templates/index.html  templates/index.html
           CMD ["python", "app.py"]
+          
+          @@ Another one without virtual:
+          
+          FROM python:latest
+          WORKDIR /code
+          ADD requirements.txt requirements.txt
+          RUN pip install -r requirements.txt
+          COPY app.py app.py
+          COPY templates/    templates/
+          CMD ["python", "app.py"]
+
  
 # Docker compose:
 
-![image](https://user-images.githubusercontent.com/54719289/106668306-1f707a00-65d0-11eb-95e4-26422be7d68f.png)
+          version: "3.8"
+          services:
+          app:
+            image: web:v1
+            container_name: app
+            ports:
+            - 5000:5000
+            links:
+            - db
+            networks:
+            - python-postgres
 
-    
-# Postgres SQL:   
+          db:
+            image: mydb:v1
+            container_name: mydb
+            restart: always
+            ports:
+            - 5432:5432
+            environment:
+            - POSTGRES_HOST_AUTH_METHOD=trust
+            - PGDATA='/var/lib/postgresql/data'
+            volumes:
+            - /var/postgres/data:/var/lib/postgres/data
+            networks:
+            - python-postgres
+
+          networks:
+          python-postgres:
+             driver : bridge
+              name: python-postgres
+ 
+ 
+       
+    @@@Docker-compose file:
+![image](https://user-images.githubusercontent.com/54719289/106786604-bdb61b80-6674-11eb-9635-4351d52da726.png)
+
+
+    @@@mydb log after docker-compose up:
+![image](https://user-images.githubusercontent.com/54719289/106785508-78451e80-6673-11eb-9fe3-840d59611b17.png)
+
+    @@@mydb-docker-compose up:
+![image](https://user-images.githubusercontent.com/54719289/106785651-a165af00-6673-11eb-87cc-4715526c0152.png)
+
+    @@@Browser
+![image](https://user-images.githubusercontent.com/54719289/106787199-6f554c80-6675-11eb-8dcd-bc63b9f382a8.png)
+
+
+
+ 
+ 
+ 
+ 
+ 
+     ######################################################################################################
+     ##  NOTES
+     ######################################################################################################
+     
+     # Postgres SQL:   
 
     docker run --name db -e POSTGRES_PASSWORD=Password1 -d -p 5432:5432 db:v1
     docker exec -it db bash
-    psql -h 3.239.59.57 -p 5432 -U postgres
+    psql -U flaskdb
     postgres=# \l
-    postgres=# \c postgres    ---to connect
+    postgres=# \c flaskdb   ---to connect
     postgres=# select * from userdetail;
     
     \q to quit
 
-
+#In case connection refuse in local:
     1. Modify two configure files
-# vi /var/lib/pgsql/data/postgresql.conf
- Replace the line:
-listen_addresses = 'localhost'  -> listen_addresses = '*'
+        # vi /var/lib/pgsql/data/postgresql.conf
+            Replace the line:
+            listen_addresses = 'localhost'  -> listen_addresses = '*'
+     2. Modify two configure files
+        # vi /var/lib/pgsql/data/postgresql.conf
+          Replaced the line:
+          listen_addresses = 'localhost'  -> listen_addresses = '*'
+        # vi /var/lib/pgsql/data/pg_hba.conf
+        Add the line at the very end:
+        host all all 0.0.0.0/0 trust
+        (If IPv6:
+        host all all ::/0 trust) 
+      
+      3. Restart the database service
+          # service postgresql restart
 
 
-
-
-1. Modify two configure files
-# vi /var/lib/pgsql/data/postgresql.conf
- Replaced the line:
-listen_addresses = 'localhost'  -> listen_addresses = '*'
-# vi /var/lib/pgsql/data/pg_hba.conf
- Add the line at the very end:
-host all all 0.0.0.0/0 trust
-(If IPv6:
-host all all ::/0 trust) 
-2. Restart the database service
-# service postgresql restart
-3. Disable the firewall
-# rcSuSEfirewall2 stop
-# chkconfig SuSEfirewall2 off
-# chkconfig SuSEfirewall2_init off
-
-
-
-3.239.59.57
-
-psql -h 3.239.59.57 -p 5432 -U postgres
-
-# Docker run:
-
-    After docker build
-    docker images
-    
-    chown postgres:postgres docker-entrypoint-initdb.d/sql1.sql
-
-    docker run --name=db -e POSTGRES_HOST_AUTH_METHOD=trust -e PGDATA=docker-entrypoint-initdb.d/sql1.sql db:v1
-    docker run --name web --link db:db -p 5000:5000 web:v1
-
-
-
-![image](https://user-images.githubusercontent.com/54719289/106667435-ee437a00-65ce-11eb-9918-cf98223dae2b.png)
-
-# Docker compose failed in web in connectivity:
-
-![image](https://user-images.githubusercontent.com/54719289/106669775-28624b00-65d2-11eb-9993-08eae2fab0b7.png)
-
-
-Need to check docker compose and then docker swarm
