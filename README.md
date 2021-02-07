@@ -172,3 +172,17 @@ docker-entrypoint-initb.d:
 ![image](https://user-images.githubusercontent.com/54719289/107150353-68834e00-6983-11eb-91cc-2994359fdc7c.png)
 
 
+        docker exec mydb pg_dumpall -U postgres --schema-only > definitiononly.sql
+        
+        In execution of docker :
+        
+![image](https://user-images.githubusercontent.com/54719289/107153252-75f40480-6992-11eb-924e-583d4a1011c2.png)
+
+![image](https://user-images.githubusercontent.com/54719289/107153289-b3f12880-6992-11eb-9d46-aa593abb5867.png)
+![image](https://user-images.githubusercontent.com/54719289/107153302-c66b6200-6992-11eb-944c-8cbd02adf6f5.png)
+![image](https://user-images.githubusercontent.com/54719289/107153313-d84d0500-6992-11eb-8c94-8830f3fe99fb.png)
+
+
+
+
+        
