@@ -1,0 +1,34 @@
+---
+- name: Fetch a backup of a postgres DB that runs on a remote docker container
+  hosts: webservers
+  gather_facts: yes
+  vars:
+     db_name: flaskdb
+     db_user: postgres
+     db_password: Password1
+  tasks:
+
+    - name: Set backup_dir and db_dump_name variable
+      set_fact:
+        backup_dir: /tmp/bkups/blog/postgres/db
+        db_dump_name: flaskdb-{{ db_name }}.bkp
+
+    - name: Make sure backup directory exists on the local machine
+      delegate_to: localhost
+      file:
+        state: directory
+        path: "{{ backup_dir }}"
+
+    - name: Dump the DB to a bind-mounted volume
+      become_user: postgres
+      command: |
+         cd
+      command: |
+         docker exec mydb bash -c  "pg_dump -U flaskdb flaskdb > tmp/{{db_dump_name}} "
+
+    - name: Fetch the dumped DB from remote to local
+      fetch:
+        src: "{{ backup_dir }}/{{ db_dump_name }}"
+        dest: "{{ backup_dir }}/"
+        flat: yes
+
