@@ -183,6 +183,43 @@ docker-entrypoint-initb.d:
 ![image](https://user-images.githubusercontent.com/54719289/107153313-d84d0500-6992-11eb-8c94-8830f3fe99fb.png)
 
 
+# pg_dump with --roles-only:
+
+      docker exec mydb pg_dumpall -U postgres --roles-only > allroles.sql
+
+![image](https://user-images.githubusercontent.com/54719289/107160889-08aa9880-69bf-11eb-9868-7887aab73159.png)
+
+
+
+# pg_dump with --tablespaces-only :
+
+            docker exec mydb pg_dumpall -U flaskdb --tablespaces-only > tb.sql
+
+![image](https://user-images.githubusercontent.com/54719289/107160946-5fb06d80-69bf-11eb-86f3-97f57ee58b80.png)
+
+
+#  pg_dump syntax for reference:
+
+
+        pg_dump -U postgres -W -F t dvdrental > c:\pgbackup\dvdrental.tar
+
+
+      -U postgres:  specifies the user to connect to the PostgreSQL database server. We used the postgres in this example.
+
+      -W:  forces pg_dump to prompt for the password before connecting to the PostgreSQL database server. After you hit enter, pg_dump will prompt for the password of postgres user.
+
+      -F : specifies the output file format that can be one of the following:
+
+          c: custom-format archive file format
+          d: directory-format archive
+          t: tar
+          p: plain-text SQL script file).
+      In this example, we use  -F t to specify the output file as a tar file.
+
+    dvdrental: is the name of the database that you want to back up.
+
+      > c:\pgbackup\dvdrental.tar is the output backup file path.
+
 
 
         
