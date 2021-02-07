@@ -161,6 +161,17 @@ docker-entrypoint-initb.d:
           
 ![image](https://user-images.githubusercontent.com/54719289/107149160-21925a00-697d-11eb-83d9-0e1ab59c7eea.png)
 
+
+      docker exec mydb pg_dump -U flaskdb flaskdb | gzip > 2.gz
+
+![image](https://user-images.githubusercontent.com/54719289/107150195-af247880-6982-11eb-8491-15d4f3a9e15a.png)
+
+      unzip with : gzip -d 2.gz
+
+![image](https://user-images.githubusercontent.com/54719289/107150335-530e2400-6983-11eb-9918-876e13dfbfe0.png)
+![image](https://user-images.githubusercontent.com/54719289/107150353-68834e00-6983-11eb-91cc-2994359fdc7c.png)
+
+
   
   
   
