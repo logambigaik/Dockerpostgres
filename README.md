@@ -154,4 +154,19 @@ docker-entrypoint-initb.d:
           3. Restart the database service
               # service postgresql restart
 
+#### pg_dump:
+
+          docker exec container-name pg_dump -U db_user dbname > dbdump_file
+          docker exec mydb pg_dump -U flaskdb flaskdb > 2.sql
+          
+![image](https://user-images.githubusercontent.com/54719289/107149160-21925a00-697d-11eb-83d9-0e1ab59c7eea.png)
+
+  
+  
+  
+  
+  
+  
+  
+ 
 
