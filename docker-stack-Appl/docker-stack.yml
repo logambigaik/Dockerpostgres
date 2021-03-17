@@ -2,24 +2,21 @@ version: "3.8"
 services:
     app:
         image: klogambigai/webapp_app:v1
+        restart: always
         ports:
         - 5000:5000
         links:
-        - db
+        - mydb
         networks:
         - python-postgres
 
     mydb:
-        image: klogambigai/webapp_mydb:v1
-        container_name: mydb
+        image:  klogambigai/webapp_mydb:v1
         restart: always
         ports:
         - 5432:5432
         environment:
         - POSTGRES_HOST_AUTH_METHOD=trust
-        - PGDATA='/var/lib/postgresql/data'
-        volumes:
-        - /var/postgres/data:/var/lib/postgres/data
         networks:
         - python-postgres
 
