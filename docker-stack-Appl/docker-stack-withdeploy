@@ -14,7 +14,7 @@ services:
           restart_policy:
             condition: on-failure
           placement:
-            constraints: [node.role == worker]
+            constraints: [node.role == worker]  or manager
         networks:
         - python-postgres
 
