@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+    app:
+        image: klogambigai/webapp_app:v1
+        restart: always
+        ports:
+        - 5000:5000
+        links:
+        - mydb
+        deploy:
+          replicas: 2
+          update_config:
+            parallelism: 2
+          restart_policy:
+            condition: on-failure
+          placement:
+            constraints: [node.role == worker]
+        networks:
+        - python-postgres
+
+    mydb:
+        image:  klogambigai/webapp_mydb:v1
+        restart: always
+        ports:
+        - 5432:5432
+        environment:
+        - POSTGRES_HOST_AUTH_METHOD=trust
+        deploy:
+          placement:
+            constraints: [node.role == worker]
+        networks:
+        - python-postgres
+
+networks:
+  python-postgres:
+       driver : overlay
